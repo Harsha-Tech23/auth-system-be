@@ -38,5 +38,34 @@ namespace auth_system_be.Controllers
 
             return Ok(new { message = "Login successful" });
         }
+
+        [HttpPost("forgot-password")]
+        public IActionResult ForgotPassword(ForgotPasswordDto dto)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == dto.Email);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            return Ok(new { message = "Password reset link sent to your email" });
+        }
+
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword(ResetPasswordDto dto)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == dto.Email);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            user.Password = dto.NewPassword;
+            _context.SaveChanges();
+
+            return Ok(new { message = "Password reset successfully" });
+        }
     }
 }
